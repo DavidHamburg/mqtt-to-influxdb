@@ -1,0 +1,14 @@
+kind: pipeline
+name: default
+
+steps:
+- name: build
+  image: debian:bullseye-slim
+  commands:
+  - apt update 
+  - apt install -y cmake g++ git libssl-dev libspdlog-dev nlohmann-json3-dev catch2 libyaml-cpp-dev libcxxopts-dev
+  - cd $DRONE_WORKSPACE && git submodule update --init
+  - mkdir -p build && cd build
+  - cmake $DRONE_WORKSPACE
+  - make -j4
+  - tests/tests

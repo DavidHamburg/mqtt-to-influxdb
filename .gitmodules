@@ -1,0 +1,3 @@
+[submodule "3rdparty/influxdb"]
+	path = 3rdparty/influxdb
+	url = https://github.com/orca-zhang/influxdb-cpp.git
