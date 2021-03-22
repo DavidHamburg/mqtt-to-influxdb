@@ -1,6 +1,18 @@
-add_library(libmqtt-to-influxdb stub.cpp)
+add_library(libmqtt-to-influxdb
+       	stringhelper.cpp
+       	stringhelper.hpp
+       	config/configuration.cpp
+       	config/configuration.hpp
+       	config/device.hpp
+       	config/duplicatedeviceexception.cpp
+       	config/duplicatedeviceexception.hpp
+       	config/document.hpp
+       	config/field.hpp
+       	config/topic.hpp
+       	config/measurement.hpp)
 
-target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json INFLUXDB)
+target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json INFLUXDB stdc++fs)
+set_target_properties(libmqtt-to-influxdb PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(libmqtt-to-influxdb PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/>

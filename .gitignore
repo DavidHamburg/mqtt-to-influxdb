@@ -43,3 +43,4 @@
 
 CMakeSettings.json*.iml
 .cmake
+.kdev4/

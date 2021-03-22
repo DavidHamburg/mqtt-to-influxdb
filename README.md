@@ -70,22 +70,22 @@ The data will not be stored in InfluxDB by default. Specify ```--store``` to wri
 thermostat:
 - topic: "zigbee2mqtt/0x00158d00053d224e"
   json: true
-  measurement:
+  measurements:
   - name: "thermostat_living_room"
-    field:
+    fields:
     - name: "battery"
       payload-field: battery
       optional: true
-      data-type: float32
+      data-type: float
     - name: "linkquality"
       payload-field: linkquality
       data-type: int
     - name: local_temperature
       payload-field: local_temperature
-      data-type: float32
+      data-type: float
     - name: window_open
       payload-field: "eurotronic_host_flags.boost"
-      data-type: boolean
+      data-type: bool
 ```
 
 ### Text Payload
@@ -94,16 +94,35 @@ thermostat:
 bedroom_tv:
 - topic: "stat/bedroom/POWER"
   description: ""
-  measurement:
+  measurements:
   - name: "plug_bed_room_tv"
-    field: 
+    fields: 
     - name: "state"
       value: true
       payload: "on"
-      data-type: boolean
+      data-type: bool
     - name: "state"
       value: false
       payload: "OFF"
       ignore-case: false
-      data-type: boolean
+      data-type: bool
 ```
+
+### Supported Data Types
+
+ - string (default)
+ - bool
+ - float
+ - int
+
+### Field
+
+|name|type|default|required|remarks|
+|----|----|-------|--------|-------|
+|name|string| |x| |
+|value|depends on data-type| | |uses the payload content or json-filed when not specified|
+|payload|string| |x or payload-field| |
+|payload-field|string| |(x) or payload|json-field in payload|
+|data-type|string|string| | |
+|ignore-case|bool|true| | |
+

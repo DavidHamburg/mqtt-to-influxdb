@@ -1,6 +1,12 @@
 #include <cxxopts.hpp>
 #include <spdlog/spdlog.h>
-#include <filesystem>
+#ifdef __cpp_lib_filesystem
+    #include <filesystem>
+    namespace fs = std::filesystem;
+#else
+    #include <experimental/filesystem>
+    namespace fs = std::experimental::filesystem;
+#endif
 
 int main(int argc, char **argv) {
     spdlog::set_level(spdlog::level::info);
@@ -24,7 +30,7 @@ int main(int argc, char **argv) {
         }
         auto config = result["config"].as<std::string>();
 
-        if (!std::filesystem::exists(config)) {
+        if (!fs::exists(config)) {
             std::cout << "Configuration file does not exist." << std::endl;
             return -1;
         }
