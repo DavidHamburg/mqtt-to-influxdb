@@ -1,4 +1,9 @@
 add_library(libmqtt-to-influxdb
+       	datatype.hpp
+       	mqttparseresult.hpp
+       	mqttmessageparser.cpp
+       	mqttmessageparser.hpp
+       	imqttmessageparser.hpp
        	stringhelper.cpp
        	stringhelper.hpp
        	config/configuration.cpp

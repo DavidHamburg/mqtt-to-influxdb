@@ -1,6 +1,7 @@
 find_package(Catch2 REQUIRED)
 
 add_executable(tests main.cpp
+	mqttmessageparserfixture.cpp
 	stringhelperfixture.cpp
 	config/configurationfixture.cpp
         config/documentfixture.cpp

@@ -2,11 +2,8 @@
 
 #include <string>
 #include <spdlog/spdlog.h>
+#include <libmqtt-to-influxdb/datatype.hpp>
 #include <libmqtt-to-influxdb/stringhelper.hpp>
-
-enum class datatype {
-    string_type, boolean_type, integer_type, float_type
-};
 
 struct field {
     std::string name{};
