@@ -7,6 +7,8 @@
 #include <experimental/filesystem>
     namespace fs = std::experimental::filesystem;
 #endif
+#include <libmqtt-to-influxdb/config/configuration.hpp>
+#include <libmqtt-to-influxdb/mqttmessageparser.hpp>
 
 int main(int argc, char **argv) {
     spdlog::set_level(spdlog::level::info);
@@ -43,11 +45,28 @@ int main(int argc, char **argv) {
         }
         auto topic = result["topic"].as<std::string>();
         auto msg = result["message"].as<std::string>();
-        auto config = result["config"].as<std::string>();
+        auto config_filename = result["config"].as<std::string>();
 
-        if (!fs::exists(config)) {
+        if (!fs::exists(config_filename)) {
             std::cout << "Configuration file does not exist." << std::endl;
             return -1;
+        }
+
+        configuration config{};
+        auto [success, document] = config.load_file(config_filename);
+        if (success){
+            mqttmessageparser parser{document};
+            auto data = parser.parse(topic, msg);
+            for(auto d : data) {
+                std::cout << "Measurement:    " << d.measurement << std::endl;
+                std::cout << "Database field: " << d.dbfield << std::endl;
+                std::cout << "Value:          " << d.value << std::endl;
+                std::cout << "Data-type:      " << d.data_type << std::endl;
+                std::cout << "---" << std::endl;
+            }
+        }
+        else{
+            std::cout << "Configuration is not valid." << std::endl;
         }
 
     } catch (cxxopts::OptionParseException &e) {
