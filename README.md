@@ -24,6 +24,8 @@ mqtt-to-influxdb is a [MQTT](https://en.wikipedia.org/wiki/MQTT) message parser 
 
 - https://github.com/jbeder/yaml-cpp
 - https://github.com/orca-zhang/influxdb-cpp
+- https://github.com/wqking/eventpp
+- https://github.com/eclipse/paho.mqtt.cpp
 
 ## Usage
 

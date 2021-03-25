@@ -1,6 +1,21 @@
-add_executable(mqtt-to-influxdb main.cpp)
+add_executable(mqtt-to-influxdb
+        main.cpp
 
-target_link_libraries(mqtt-to-influxdb PRIVATE libmqtt-to-influxdb)
+        mqtt/imqttlistenerfactory.hpp
+        mqtt/mqttlistenerfactory.cpp
+        mqtt/mqttlistenerfactory.hpp
+
+        mqtt/imqttlistener.hpp
+        mqtt/mqttlistener.cpp
+        mqtt/mqttlistener.hpp
+
+        mqtt/internal/logactionlistener.cpp
+        mqtt/internal/logactionlistener.hpp
+        mqtt/internal/mqttclientcallback.cpp
+        mqtt/internal/mqttclientcallback.hpp
+        )
+
+target_link_libraries(mqtt-to-influxdb PRIVATE libmqtt-to-influxdb PahoMqttCpp::paho-mqttpp3 eventpp uuid)
 
 target_include_directories(mqtt-to-influxdb PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/>
