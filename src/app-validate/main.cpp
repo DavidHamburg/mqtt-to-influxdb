@@ -9,6 +9,7 @@
 #endif
 #include <libmqtt-to-influxdb/config/configuration.hpp>
 #include <libmqtt-to-influxdb/mqttmessageparser.hpp>
+#include <libmqtt-to-influxdb/database/iotrepository.hpp>
 
 int main(int argc, char **argv) {
     spdlog::set_level(spdlog::level::info);
@@ -46,12 +47,14 @@ int main(int argc, char **argv) {
         auto topic = result["topic"].as<std::string>();
         auto msg = result["message"].as<std::string>();
         auto config_filename = result["config"].as<std::string>();
+        auto store = result["store"].as<bool>();
 
         if (!fs::exists(config_filename)) {
             std::cout << "Configuration file does not exist." << std::endl;
             return -1;
         }
 
+        iot_repository repo{"iot", "mqtt", "127.0.0.1", 8086};
         configuration config{};
         auto [success, document] = config.load_file(config_filename);
         if (success){
@@ -63,6 +66,10 @@ int main(int argc, char **argv) {
                 std::cout << "Value:          " << d.value << std::endl;
                 std::cout << "Data-type:      " << d.data_type << std::endl;
                 std::cout << "---" << std::endl;
+
+                if (store) {
+                    repo.write_mqtt_result(d);
+                }
             }
         }
         else{

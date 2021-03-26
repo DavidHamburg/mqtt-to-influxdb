@@ -10,6 +10,7 @@
 #include <thread>
 #include <libmqtt-to-influxdb/config/configuration.hpp>
 #include <libmqtt-to-influxdb/mqttmessageparser.hpp>
+#include <libmqtt-to-influxdb/database/iotrepository.hpp>
 
 namespace fs = std::experimental::filesystem;
 #endif
@@ -48,6 +49,7 @@ int main(int argc, char **argv) {
             return -2;
         }
 
+        iot_repository repo{"iot", "mqtt", "127.0.0.1", 8086};
         mqttmessageparser parser{document};
         mqttlistenerfactory listener_factory{};
         auto listener = listener_factory.create("192.168.178.201:1883", "mqtt-to-influxdb", "#");
@@ -62,6 +64,7 @@ int main(int argc, char **argv) {
                 std::cout << "Value:          " << d.value << std::endl;
                 std::cout << "Data-type:      " << d.data_type << std::endl;
                 std::cout << "---" << std::endl;
+                repo.write_mqtt_result(d);
             }
         });
 

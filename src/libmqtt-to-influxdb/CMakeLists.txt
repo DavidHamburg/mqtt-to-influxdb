@@ -6,6 +6,7 @@ add_library(libmqtt-to-influxdb
        	imqttmessageparser.hpp
        	stringhelper.cpp
        	stringhelper.hpp
+
        	config/configuration.cpp
        	config/configuration.hpp
        	config/device.hpp
@@ -14,7 +15,12 @@ add_library(libmqtt-to-influxdb
        	config/document.hpp
        	config/field.hpp
        	config/topic.hpp
-       	config/measurement.hpp)
+       	config/measurement.hpp
+
+        database/iotrepository.cpp
+        database/iotrepository.hpp
+        database/iiotrepository.hpp
+)
 
 target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json INFLUXDB stdc++fs)
 set_target_properties(libmqtt-to-influxdb PROPERTIES LINKER_LANGUAGE CXX)
