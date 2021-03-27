@@ -4,8 +4,8 @@
 
 mqttmessageparser::mqttmessageparser(const std::shared_ptr<document> &document) : m_document(document) {}
 
-std::vector<mqtt_parse_result> mqttmessageparser::parse(const std::string &msg, const std::string &payload) const {
-    std::vector<mqtt_parse_result> result{};
+std::map<std::string, std::vector<mqtt_parse_result>> mqttmessageparser::parse(const std::string &msg, const std::string &payload) const {
+    std::map<std::string, std::vector<mqtt_parse_result>> result{};
     for (const auto &device : m_document->devices) {
         for (const auto &topic : device.topics) {
             if (topic.name == msg) {
@@ -35,13 +35,13 @@ std::vector<mqtt_parse_result> mqttmessageparser::parse(const std::string &msg, 
                                 }
                                 auto[success, data] = create_mqtt_parse_result(measurement, field, value);
                                 if (success) {
-                                    result.push_back(data);
+                                    result[data.measurement].push_back(data);
                                 }
                             }
                         } else {
                             auto[success, data] =create_mqtt_parse_result(measurement, field, payload);
                             if (success) {
-                                result.push_back(data);
+                                result[data.measurement].push_back(data);
                             }
                         }
                     }

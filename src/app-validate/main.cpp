@@ -63,15 +63,18 @@ int main(int argc, char **argv) {
             auto &con = document->connection;
             iot_repository repo{con.influxdb_user, con.influxdb_password, con.influxdb_ip, con.influxdb_port};
 
-            for(auto d : data) {
-                std::cout << "Measurement:    " << d.measurement << std::endl;
-                std::cout << "Database field: " << d.dbfield << std::endl;
-                std::cout << "Value:          " << d.value << std::endl;
-                std::cout << "Data-type:      " << d.data_type << std::endl;
-                std::cout << "---" << std::endl;
+            for(const auto &d : data) {
+                std::cout << "Measurement:    " << d.first << std::endl;
+                for(const auto &field : d.second){
+                    std::cout << "Database field: " << field.dbfield << std::endl;
+                    std::cout << "Value:          " << field.value << std::endl;
+                    std::cout << "Data-type:      " << field.data_type << std::endl;
+                    std::cout << "---" << std::endl;
+                }
 
+                std::cout << "-----------" << std::endl;
                 if (store) {
-                    repo.write_mqtt_result(d);
+                    repo.write_mqtt_result(d.first, d.second);
                 }
             }
         }

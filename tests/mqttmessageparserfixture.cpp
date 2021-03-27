@@ -74,7 +74,7 @@ TEST_CASE_METHOD(messageparserfixture, "matches match") {
     }
     SECTION("returns data") {
         auto result = sut().parse(sample_topic, "ON");
-        auto data = result.at(0);
+        auto data = result.at("my measurement").at(0);
         REQUIRE(data.measurement == "my measurement");
         REQUIRE(data.value == "true");
         REQUIRE(data.data_type == datatype::boolean_type);
@@ -89,12 +89,12 @@ TEST_CASE_METHOD(messageparserfixture, "parses value") {
 
     SECTION("uses payload when no value specified") {
         auto result = sut().parse(sample_topic, "ON");
-        REQUIRE(result.at(0).value == "ON");
+        REQUIRE(result["my measurement"].at(0).value == "ON");
     }
     SECTION("uses value when specified") {
         field().value = "true";
         auto result = sut().parse(sample_topic, "on");
-        REQUIRE(result.at(0).value == "true");
+        REQUIRE(result["my measurement"].at(0).value == "true");
     }
 }
 
@@ -106,12 +106,12 @@ TEST_CASE_METHOD(messageparserfixture, "parses simple json field as string") {
 
     SECTION("uses json-field value when no value specified") {
         auto result = sut().parse(sample_topic, "{\"state\": \"ON\"}");
-        REQUIRE(result.at(0).value == "ON");
+        REQUIRE(result["my measurement"].at(0).value == "ON");
     }
     SECTION("uses value when specified") {
         field().value = "true";
         auto result = sut().parse(sample_topic, "{\"state\": \"ON\"}");
-        REQUIRE(result.at(0).value == "true");
+        REQUIRE(result["my measurement"].at(0).value == "true");
     }
 }
 
@@ -151,7 +151,7 @@ TEST_CASE_METHOD(messageparserfixture, "json - nested field") {
 
     auto result = sut().parse(sample_topic, "{\"battery\":{\"low\":false,\"value\":\"55\"}}");
     REQUIRE(result.size() == 1);
-    REQUIRE(result.at(0).value == "55");
+    REQUIRE(result["my measurement"].at(0).value == "55");
 }
 
 TEST_CASE_METHOD(messageparserfixture, "json - accepts number") {
@@ -161,5 +161,5 @@ TEST_CASE_METHOD(messageparserfixture, "json - accepts number") {
 
     auto result = sut().parse(sample_topic, "{\"battery\": 55 }");
     REQUIRE(result.size() == 1);
-    REQUIRE(result.at(0).value == "55");
+    REQUIRE(result["my measurement"].at(0).value == "55");
 }

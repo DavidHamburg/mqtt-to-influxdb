@@ -6,5 +6,5 @@ class iiot_repository {
 public:
   virtual ~iiot_repository() = default;
 
-  virtual void write_mqtt_result(const mqtt_parse_result &data) = 0;
+  virtual void write_mqtt_result(const std::string &measurement, const std::vector<mqtt_parse_result> &data) = 0;
 };

@@ -59,13 +59,17 @@ int main(int argc, char **argv) {
             auto topic = msg->get_topic();
             auto payload = msg->get_payload_str();
             auto data = parser.parse(topic, payload);
-            for(auto d : data) {
-                std::cout << "Measurement:    " << d.measurement << std::endl;
-                std::cout << "Database field: " << d.dbfield << std::endl;
-                std::cout << "Value:          " << d.value << std::endl;
-                std::cout << "Data-type:      " << d.data_type << std::endl;
-                std::cout << "---" << std::endl;
-                repo.write_mqtt_result(d);
+            for(const auto &d : data) {
+                std::cout << "Measurement:    " << d.first << std::endl;
+                for(const auto &field : d.second){
+                    std::cout << "Database field: " << field.dbfield << std::endl;
+                    std::cout << "Value:          " << field.value << std::endl;
+                    std::cout << "Data-type:      " << field.data_type << std::endl;
+                    std::cout << "---" << std::endl;
+                }
+
+                std::cout << "-----------" << std::endl;
+                repo.write_mqtt_result(d.first, d.second);
             }
         });
 
