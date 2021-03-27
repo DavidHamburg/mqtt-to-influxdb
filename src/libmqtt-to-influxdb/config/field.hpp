@@ -8,8 +8,8 @@
 struct field {
     std::string name{};
     std::string value{};
-    std::string payload{};
-    std::string payload_field{};
+    std::string match{};
+    std::string json_field{};
     datatype data_type{datatype::string_type};
     bool ignore_case{true};
 };
@@ -21,7 +21,7 @@ namespace YAML {
             Node node;
             node["name"] = rhs.name;
             node["value"] = rhs.value;
-            node["payload"] = rhs.payload;
+            node["match"] = rhs.match;
             switch (rhs.data_type) {
                 case datatype::string_type:
                     node["data-type"] = "string";
@@ -46,10 +46,6 @@ namespace YAML {
                 spdlog::error("Missing name (line: {})", node.Mark().line);
                 return false;
             }
-            if (!node["payload"].IsDefined() && !node["payload-field"].IsDefined()) {
-                spdlog::error("Missing payload or payload-field (line: {})", node.Mark().line);
-                return false;
-            }
             rhs.name = node["name"].as<std::string>();
             if (stringhelper::is_empty_or_whitespace(rhs.name)){
                 spdlog::error("Measurement name must not be empty (line: {})", node.Mark().line);
@@ -62,11 +58,11 @@ namespace YAML {
                     return false;
                 }
             }
-            if (node["payload"].IsDefined()) {
-                rhs.payload = node["payload"].as<std::string>();
+            if (node["match"].IsDefined()) {
+                rhs.match = node["match"].as<std::string>();
             }
-            if (node["payload-field"].IsDefined()) {
-                rhs.payload_field = node["payload-field"].as<std::string>();
+            if (node["json-field"].IsDefined()) {
+                rhs.json_field = node["json-field"].as<std::string>();
             }
             if (node["ignore-case"].IsDefined()) {
                 rhs.ignore_case = node["ignore-case"].as<bool>();

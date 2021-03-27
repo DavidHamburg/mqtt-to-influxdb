@@ -11,7 +11,7 @@ TEST_CASE_METHOD(fieldfixture, "can deserialize field") {
     auto sample = R"(
     name: "plug"
     value: "is_on"
-    payload: "on"
+    match: "on"
     data-type: "bool"
     )";
     YAML::Node node = YAML::Load(sample);
@@ -22,7 +22,7 @@ TEST_CASE_METHOD(fieldfixture, "can deserialize field") {
 
 TEST_CASE_METHOD(fieldfixture, "deserializes name") {
     std::string sample = R"(
-    payload: "on"
+    match: "on"
     value: "is_on"
     )";
     SECTION("is required") {
@@ -45,7 +45,7 @@ TEST_CASE_METHOD(fieldfixture, "deserializes name") {
 TEST_CASE_METHOD(fieldfixture, "deserializes value") {
     std::string sample = R"(
     name: "plug"
-    payload: "on"
+    match: "on"
     )";
     SECTION("is optional") {
         YAML::Node node = YAML::Load(sample);
@@ -82,25 +82,20 @@ TEST_CASE_METHOD(fieldfixture, "deserializes value") {
     }
 }
 
-TEST_CASE_METHOD(fieldfixture, "deserializes payload-field") {
+TEST_CASE_METHOD(fieldfixture, "deserializes json-field") {
     std::string sample = R"(
     name: "plug"
     value: "is_on"
     )";
-    SECTION("is optional when payload is not defined") {
-        sample += "payload: 123";
+    SECTION("is optional") {
         YAML::Node node = YAML::Load(sample);
         REQUIRE_NOTHROW(node.as<field>());
     }
-    SECTION("required when payload is missing") {
-        YAML::Node node = YAML::Load(sample);
-        REQUIRE_THROWS_AS(node.as<field>(), YAML::RepresentationException);
-    }
     SECTION("value") {
-        sample += "payload-field: 123";
+        sample += "json-field: 123";
         YAML::Node node = YAML::Load(sample);
         auto m = node.as<field>();
-        REQUIRE(m.payload_field == "123");
+        REQUIRE(m.json_field == "123");
     }
 }
 
@@ -108,7 +103,7 @@ TEST_CASE_METHOD(fieldfixture, "deserializes ignore-case") {
     std::string sample = R"(
     name: "plug"
     value: "is_on"
-    payload: "on"
+    match: "on"
     )";
     SECTION("is optional") {
         YAML::Node node = YAML::Load(sample);
@@ -137,27 +132,27 @@ TEST_CASE_METHOD(fieldfixture, "data-type is optional, string is default") {
     auto sample = R"(
     name: "plug"
     value: "is_on"
-    payload: "on"
+    match: "on"
     )";
     YAML::Node node = YAML::Load(sample);
     field m = node.as<field>();
     REQUIRE(m.data_type == datatype::string_type);
 }
 
-TEST_CASE_METHOD(fieldfixture, "payload is required") {
+TEST_CASE_METHOD(fieldfixture, "match is optional") {
     auto sample = R"(
     name: "plug"
     value: "is_on"
     )";
     YAML::Node node = YAML::Load(sample);
-    REQUIRE_THROWS_AS(node.as<field>(), YAML::RepresentationException);
+    REQUIRE_NOTHROW(node.as<field>());
 }
 
 TEST_CASE_METHOD(fieldfixture, "supports list of data-types") {
     std::string sample = R"(
     name: "plug"
     value: "is_on"
-    payload: "on"
+    match: "on"
     )";
 
     SECTION("bool") {

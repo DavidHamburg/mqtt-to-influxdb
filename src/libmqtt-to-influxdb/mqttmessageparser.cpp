@@ -1,25 +1,48 @@
 #include <libmqtt-to-influxdb/mqttmessageparser.hpp>
 #include <libmqtt-to-influxdb/stringhelper.hpp>
+#include <nlohmann/json.hpp>
 
-mqttmessageparser::mqttmessageparser(const std::shared_ptr<document> &document) : m_document(document) { }
+mqttmessageparser::mqttmessageparser(const std::shared_ptr<document> &document) : m_document(document) {}
 
 std::vector<mqtt_parse_result> mqttmessageparser::parse(const std::string &msg, const std::string &payload) const {
     std::vector<mqtt_parse_result> result{};
-    for(const auto &device : m_document->devices) {
+    for (const auto &device : m_document->devices) {
         for (const auto &topic : device.topics) {
             if (topic.name == msg) {
                 for (auto &measurement : topic.measurements) {
                     for (auto &field : measurement.fields) {
-                        if (stringhelper::is_equal(field.payload, payload, !field.ignore_case)) {
-                            auto &data = result.emplace_back();
-                            data.measurement = measurement.name;
-                            if (field.value == "") {
-                                data.value = field.payload;
-                            } else{
-                                data.value = field.value;
+
+                        if (!stringhelper::is_empty_or_whitespace(field.json_field)) {
+                            auto json = nlohmann::json::parse(payload);
+                            auto fields = stringhelper::split(field.json_field, '.');
+                            auto jsonValue = json;
+                            bool found = true;
+                            for (const auto &field : fields){
+                                if (jsonValue.contains(field)) {
+                                    jsonValue = jsonValue[field];
+                                } else {
+                                    found = false;
+                                }
                             }
-                            data.data_type = field.data_type;
-                            data.dbfield = field.name;
+                            if (found) {
+                                std::string value = "";
+                                if (jsonValue.is_number_float()){
+                                    value = std::to_string(jsonValue.get<float>());
+                                } else if (jsonValue.is_number_integer()){
+                                    value = std::to_string(jsonValue.get<int>());
+                                } else {
+                                    value = jsonValue.get<std::string>();
+                                }
+                                auto[success, data] = create_mqtt_parse_result(measurement, field, value);
+                                if (success) {
+                                    result.push_back(data);
+                                }
+                            }
+                        } else {
+                            auto[success, data] =create_mqtt_parse_result(measurement, field, payload);
+                            if (success) {
+                                result.push_back(data);
+                            }
                         }
                     }
                 }
@@ -28,3 +51,23 @@ std::vector<mqtt_parse_result> mqttmessageparser::parse(const std::string &msg, 
     }
     return result;
 }
+
+std::tuple<bool, mqtt_parse_result>
+mqttmessageparser::create_mqtt_parse_result(const measurement &measurement, const field &field,
+                                            const std::string &mqtt_payload) const {
+    mqtt_parse_result data{};
+    if (stringhelper::is_equal(field.match, mqtt_payload, !field.ignore_case)) {
+        data.measurement = measurement.name;
+        if (field.value == "") {
+            data.value = mqtt_payload;
+        } else {
+            data.value = field.value;
+        }
+        data.data_type = field.data_type;
+        data.dbfield = field.name;
+        return std::make_tuple(true, data);
+    }
+    return std::make_tuple(false, data);
+}
+
+

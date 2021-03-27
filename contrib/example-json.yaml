@@ -17,8 +17,7 @@ bedroom_tv:
             value: true
             match: "on"
             data-type: bool
-          - name: "state"
-            value: false
-            match: "OFF"
-            ignore-case: false
-            data-type: bool
+            json-field: state
+          - name: "battery"
+            data-type: int
+            json-field: battery.value

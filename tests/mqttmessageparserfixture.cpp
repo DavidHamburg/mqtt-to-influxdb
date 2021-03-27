@@ -52,9 +52,9 @@ TEST_CASE_METHOD(messageparserfixture, "parsing unknown message returns empty li
     REQUIRE(result.size() == 0);
 }
 
-TEST_CASE_METHOD(messageparserfixture, "matches payload") {
+TEST_CASE_METHOD(messageparserfixture, "matches match") {
     measurement().name = "my measurement";
-    field().payload = "ON";
+    field().match = "ON";
     field().value = "true";
     field().data_type = datatype::boolean_type;
     field().name = "power";
@@ -84,7 +84,7 @@ TEST_CASE_METHOD(messageparserfixture, "matches payload") {
 
 TEST_CASE_METHOD(messageparserfixture, "parses value") {
     measurement().name = "my measurement";
-    field().payload = "ON";
+    field().match = "ON";
     field().name = "power";
 
     SECTION("uses payload when no value specified") {
@@ -96,4 +96,70 @@ TEST_CASE_METHOD(messageparserfixture, "parses value") {
         auto result = sut().parse(sample_topic, "on");
         REQUIRE(result.at(0).value == "true");
     }
+}
+
+TEST_CASE_METHOD(messageparserfixture, "parses simple json field as string") {
+    measurement().name = "my measurement";
+    field().match = "On";
+    field().name = "power";
+    field().json_field = "state";
+
+    SECTION("uses json-field value when no value specified") {
+        auto result = sut().parse(sample_topic, "{\"state\": \"ON\"}");
+        REQUIRE(result.at(0).value == "ON");
+    }
+    SECTION("uses value when specified") {
+        field().value = "true";
+        auto result = sut().parse(sample_topic, "{\"state\": \"ON\"}");
+        REQUIRE(result.at(0).value == "true");
+    }
+}
+
+TEST_CASE_METHOD(messageparserfixture, "json field value must match payload") {
+    measurement().name = "my measurement";
+    field().name = "power";
+    field().json_field = "state";
+
+    SECTION("matches exactly") {
+        field().match = "ON";
+        auto result = sut().parse(sample_topic, "{\"state\": \"ON\"}");
+        REQUIRE(result.size() == 1);
+    }
+    SECTION("case-sensitive when specified") {
+        field().match = "oN";
+        field().ignore_case = false;
+        auto result = sut().parse(sample_topic, "{\"state\": \"ON\"}");
+        REQUIRE(result.size() == 0);
+    }
+    SECTION("ignores case by default") {
+        field().match = "oN";
+        field().ignore_case = true;
+        auto result = sut().parse(sample_topic, "{\"state\": \"ON\"}");
+        REQUIRE(result.size() == 1);
+    }
+    SECTION("no match") {
+        field().match = "xyz";
+        auto result = sut().parse(sample_topic, "{\"state\": \"ON\"}");
+        REQUIRE(result.size() == 0);
+    }
+}
+
+TEST_CASE_METHOD(messageparserfixture, "json - nested field") {
+    measurement().name = "my measurement";
+    field().name = "power";
+    field().json_field = "battery.value";
+
+    auto result = sut().parse(sample_topic, "{\"battery\":{\"low\":false,\"value\":\"55\"}}");
+    REQUIRE(result.size() == 1);
+    REQUIRE(result.at(0).value == "55");
+}
+
+TEST_CASE_METHOD(messageparserfixture, "json - accepts number") {
+    measurement().name = "my measurement";
+    field().name = "power";
+    field().json_field = "battery";
+
+    auto result = sut().parse(sample_topic, "{\"battery\": 55 }");
+    REQUIRE(result.size() == 1);
+    REQUIRE(result.at(0).value == "55");
 }

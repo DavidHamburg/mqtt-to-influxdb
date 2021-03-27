@@ -19,6 +19,8 @@ mqtt-to-influxdb is a [MQTT](https://en.wikipedia.org/wiki/MQTT) message parser 
 - libcxxopts-dev
 - catch2
 - libspdlog-dev
+- stduuid
+- libmsgsl-dev
 
 ## Dependencies
 
@@ -80,22 +82,21 @@ settings:
     port: 1883
 thermostat:
 - topic: "zigbee2mqtt/0x00158d00053d224e"
-  json: true
   measurements:
   - name: "thermostat_living_room"
     fields:
     - name: "battery"
-      payload-field: battery
+      json-field: battery
       optional: true
       data-type: float
     - name: "linkquality"
-      payload-field: linkquality
+      json-field: linkquality
       data-type: int
     - name: local_temperature
-      payload-field: local_temperature
+      json-field: local_temperature
       data-type: float
     - name: window_open
-      payload-field: "eurotronic_host_flags.boost"
+      json-field: "eurotronic_host_flags.boost"
       data-type: bool
 ```
 
@@ -119,11 +120,11 @@ bedroom_tv:
     fields: 
     - name: "state"
       value: true
-      payload: "on"
+      match: "on"
       data-type: bool
     - name: "state"
       value: false
-      payload: "OFF"
+      match: "OFF"
       ignore-case: false
       data-type: bool
 ```
@@ -140,9 +141,8 @@ bedroom_tv:
 |name|type|default|required|remarks|
 |----|----|-------|--------|-------|
 |name|string| |x| |
-|value|depends on data-type| | |uses the payload content or json-filed when not specified|
-|payload|string| |x or payload-field| |
-|payload-field|string| |(x) or payload|json-field in payload|
+|value|depends on data-type| | |uses the payload content or json-field content when not specified|
+|json-field|string| | |json-field in payload to read|
 |data-type|string|string| | |
 |ignore-case|bool|true| | |
 

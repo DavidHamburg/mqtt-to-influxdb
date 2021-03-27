@@ -15,13 +15,12 @@ TEST_CASE_METHOD(configurationfixture, "can load valid configuration") {
         port: 8086
     thermostat:
     - topic: "zigbee2mqtt/0x00158d00053d224e"
-      json: true
       measurements:
       - name: "plug"
         fields:
         - name: "dbfield"
           value: "is_on"
-          payload: "on"
+          match: "on"
           data-type: "bool"
     )";
     configuration sut{};
@@ -43,7 +42,6 @@ TEST_CASE_METHOD(configurationfixture, "load returns false for invalid input") {
         auto sample = R"(
         thermostat:
         - topic: "zigbee2mqtt/0x00158d00053d224e"
-          json: true
         )";
         auto [result, _] = sut.load(sample);
         REQUIRE(result == false);

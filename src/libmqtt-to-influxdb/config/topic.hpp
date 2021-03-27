@@ -7,7 +7,6 @@
 #include <libmqtt-to-influxdb/stringhelper.hpp>
 
 struct topic {
-    bool is_json{};
     std::string name{};
     std::vector<measurement> measurements{};
 };
@@ -18,7 +17,6 @@ namespace YAML {
         static Node encode(const topic& rhs) {
             Node node;
             node["topic"] = rhs.name;
-            node["json"] = rhs.is_json;
             node["measurements"] = rhs.measurements;
             return node;
         }
@@ -38,9 +36,6 @@ namespace YAML {
                 return false;
             }
 
-            if (node["json"].IsDefined()) {
-                rhs.is_json = node["json"].as<bool>();
-            }
             rhs.measurements = node["measurements"].as<std::vector<measurement>>();
             return true;
         }

@@ -53,3 +53,21 @@ TEST_CASE_METHOD(stringhelperfixture, "convert to bool") {
         REQUIRE(result == true);
     }
 }
+
+TEST_CASE_METHOD(stringhelperfixture, "split") {
+    SECTION("empty string") {
+        auto result = stringhelper::split("", '.');
+        REQUIRE(result.size() == 0);
+    }
+    SECTION("splits by delimiter") {
+        auto result = stringhelper::split("part1.part2", '.');
+        REQUIRE(result.size() == 2);
+        REQUIRE(result.at(0) == "part1");
+        REQUIRE(result.at(1) == "part2");
+    }
+    SECTION("splits by delimiter without delimiter") {
+        auto result = stringhelper::split("part1", '.');
+        REQUIRE(result.size() == 1);
+        REQUIRE(result.at(0) == "part1");
+    }
+}

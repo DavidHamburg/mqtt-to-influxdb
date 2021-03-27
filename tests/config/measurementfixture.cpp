@@ -9,7 +9,7 @@ TEST_CASE_METHOD(measurementfixture, "deserializes measurement name") {
     std::string sample = R"(
     fields:
     - name: "battery"
-      payload-field: battery
+      json-field: battery
     )";
     SECTION("is required") {
         YAML::Node node = YAML::Load(sample);
@@ -46,7 +46,7 @@ TEST_CASE_METHOD(measurementfixture, "deserializes measurement fields") {
         name: "plug"
         fields:
           name: "battery"
-          payload-field: battery
+          json-field: battery
         )";
         YAML::Node node = YAML::Load(sample);
         REQUIRE_THROWS_AS(node.as<measurement>(), YAML::RepresentationException);
@@ -56,7 +56,7 @@ TEST_CASE_METHOD(measurementfixture, "deserializes measurement fields") {
         name: "plug"
         fields:
         - name: "battery"
-          payload-field: battery
+          json-field: battery
         )";
         YAML::Node node = YAML::Load(sample);
         auto m = node.as<measurement>();

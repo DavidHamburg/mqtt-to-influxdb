@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <tuple>
 
 class mqttmessageparser : public imqttmessageparser {
 public:
@@ -13,4 +14,5 @@ public:
 
 private:
     std::shared_ptr<document> m_document;
+    std::tuple<bool, mqtt_parse_result> create_mqtt_parse_result(const measurement &measurement, const field &field, const std::string &mqtt_payload) const;
 };

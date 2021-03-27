@@ -16,13 +16,12 @@ TEST_CASE_METHOD(documentfixture, "can deserialize settings") {
         port: 8086
     thermostat:
     - topic: "zigbee2mqtt/0x00158d00053d224e"
-      json: true
       measurements:
       - name: "plug"
         fields:
         - name: "dbfield"
           value: "is_on"
-          payload: "on"
+          match: "on"
           data-type: "bool"
     )";
     YAML::Node node = YAML::Load(sample);
@@ -46,23 +45,21 @@ TEST_CASE_METHOD(documentfixture, "can deserialize device") {
         port: 8086
     thermostat:
     - topic: "zigbee2mqtt/0x00158d00053d224e"
-      json: true
       measurements:
       - name: "plug"
         fields:
         - name: "dbfield"
           value: "is_on"
-          payload: "on"
+          match: "on"
           data-type: "bool"
     plug:
     - topic: "zigbee2mqtt/0x00158d00053d224e"
-      json: true
       measurements:
       - name: "plug"
         fields:
         - name: "dbfield"
           value: "is_on"
-          payload: "on"
+          match: "on"
           data-type: "bool"
     )";
     YAML::Node node = YAML::Load(sample);
@@ -83,23 +80,21 @@ TEST_CASE_METHOD(documentfixture, "does not allow two devices with same name") {
         port: 8086
     plug:
     - topic: "zigbee2mqtt/0x00158d00053d224e"
-      json: true
       measurements:
       - name: "plug"
         fields:
         - name: "dbfield"
           value: "is_on"
-          payload: "on"
+          match: "on"
           data-type: "bool"
     plug:
     - topic: "zigbee2mqtt/0x00158d00053d224e"
-      json: true
       measurements:
       - name: "plug"
         fields:
         - name: "dbfield"
           value: "is_on"
-          payload: "on"
+          match: "on"
           data-type: "bool"
     )";
     YAML::Node node = YAML::Load(sample);
