@@ -10,7 +10,7 @@ namespace mqtt{
 
 class mqttlistener : public imqttlistener {
 public:
-    mqttlistener(const std::string &mqtt_server_ip, const std::string &name, const std::string &topic);
+    mqttlistener(const std::string &mqtt_server_ip, const int port, const std::string &name, const std::string &topic);
     ~mqttlistener();
     void subscribe(std::function<void (mqtt::const_message_ptr)> action) override;
 private:

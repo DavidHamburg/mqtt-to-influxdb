@@ -49,10 +49,11 @@ int main(int argc, char **argv) {
             return -2;
         }
 
-        iot_repository repo{"iot", "mqtt", "127.0.0.1", 8086};
+        auto &con = document->connection;
+        iot_repository repo{con.influxdb_user, con.influxdb_password, con.influxdb_ip, con.influxdb_port};
         mqttmessageparser parser{document};
         mqttlistenerfactory listener_factory{};
-        auto listener = listener_factory.create("192.168.178.201:1883", "mqtt-to-influxdb", "#");
+        auto listener = listener_factory.create(con.broker_ip, con.broker_port, "mqtt-to-influxdb", "#");
         listener->subscribe([&](mqtt::const_message_ptr msg){
 
             auto topic = msg->get_topic();

@@ -54,12 +54,15 @@ int main(int argc, char **argv) {
             return -1;
         }
 
-        iot_repository repo{"iot", "mqtt", "127.0.0.1", 8086};
         configuration config{};
         auto [success, document] = config.load_file(config_filename);
         if (success){
             mqttmessageparser parser{document};
             auto data = parser.parse(topic, msg);
+
+            auto &con = document->connection;
+            iot_repository repo{con.influxdb_user, con.influxdb_password, con.influxdb_ip, con.influxdb_port};
+
             for(auto d : data) {
                 std::cout << "Measurement:    " << d.measurement << std::endl;
                 std::cout << "Database field: " << d.dbfield << std::endl;

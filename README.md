@@ -69,6 +69,15 @@ The data will not be stored in InfluxDB by default. Specify ```--store``` to wri
 ```
 
 ```yaml
+settings:
+  influxdb:
+    ip: 127.0.0.1
+    port: 8086
+    user: iot
+    password: mqtt
+  broker:
+    ip: 127.0.0.1
+    port: 1883
 thermostat:
 - topic: "zigbee2mqtt/0x00158d00053d224e"
   json: true
@@ -93,6 +102,15 @@ thermostat:
 ### Text Payload
 
 ```yaml
+settings:
+  influxdb:
+    ip: 127.0.0.1
+    port: 8086
+    user: iot
+    password: mqtt
+  broker:
+    ip: 127.0.0.1
+    port: 1883
 bedroom_tv:
 - topic: "stat/bedroom/POWER"
   description: ""

@@ -8,6 +8,7 @@ add_executable(tests main.cpp
         config/documentfixture.cpp
         config/fieldfixture.cpp
         config/measurementfixture.cpp
+        config/settingsfixture.cpp
         config/topicfixture.cpp)
 
 target_link_libraries(tests Catch2::Catch2 libmqtt-to-influxdb)

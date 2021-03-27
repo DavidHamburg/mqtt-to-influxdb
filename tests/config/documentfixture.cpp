@@ -3,12 +3,47 @@
 #include <string>
 #include <libmqtt-to-influxdb/config/document.hpp>
 
-class documentfixture{
-public:
-};
+class documentfixture{ };
+
+TEST_CASE_METHOD(documentfixture, "can deserialize settings") {
+    auto sample = R"(
+    settings:
+      influxdb:
+        ip: 127.0.0.1
+        port: 1883
+      broker:
+        ip: 127.0.0.1
+        port: 8086
+    thermostat:
+    - topic: "zigbee2mqtt/0x00158d00053d224e"
+      json: true
+      measurements:
+      - name: "plug"
+        fields:
+        - name: "dbfield"
+          value: "is_on"
+          payload: "on"
+          data-type: "bool"
+    )";
+    YAML::Node node = YAML::Load(sample);
+    auto d = node.as<document>();
+    REQUIRE(d.devices.size() == 1);
+    REQUIRE(d.connection.influxdb_ip == "127.0.0.1");
+    REQUIRE(d.connection.influxdb_port == 1883);
+    REQUIRE(d.connection.broker_ip == "127.0.0.1");
+    REQUIRE(d.connection.broker_port == 8086);
+}
+
 
 TEST_CASE_METHOD(documentfixture, "can deserialize device") {
     auto sample = R"(
+    settings:
+      influxdb:
+        ip: 127.0.0.1
+        port: 1883
+      broker:
+        ip: 127.0.0.1
+        port: 8086
     thermostat:
     - topic: "zigbee2mqtt/0x00158d00053d224e"
       json: true
@@ -39,6 +74,13 @@ TEST_CASE_METHOD(documentfixture, "can deserialize device") {
 
 TEST_CASE_METHOD(documentfixture, "does not allow two devices with same name") {
     auto sample = R"(
+    settings:
+      influxdb:
+        ip: 127.0.0.1
+        port: 1883
+      broker:
+        ip: 127.0.0.1
+        port: 8086
     plug:
     - topic: "zigbee2mqtt/0x00158d00053d224e"
       json: true

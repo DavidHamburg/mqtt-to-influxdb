@@ -5,13 +5,16 @@
 #include <uuid.h>
 #include <sstream>
 
-mqttlistener::mqttlistener(const std::string &mqtt_server_ip, const std::string &name, const std::string &topic) {
+mqttlistener::mqttlistener(const std::string &mqtt_server_ip, const int port, const std::string &name, const std::string &topic) {
     mqtt::connect_options connOpts;
     connOpts.set_keep_alive_interval(20);
     connOpts.set_clean_session(true);
-    const std::string address("tcp://" + mqtt_server_ip);
+
+    std::stringstream address;
+    address << "tcp://" << mqtt_server_ip << ":" << port;
+
     const auto clientid = get_unique_mqtt_client_name(name);
-    m_client = std::make_unique<mqtt::async_client>(address, clientid);
+    m_client = std::make_unique<mqtt::async_client>(address.str(), clientid);
 
     m_callback = std::make_unique<mqttclientcallback>(*m_client, connOpts, clientid, topic);
     m_client->set_callback(*m_callback);

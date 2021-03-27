@@ -1,0 +1,76 @@
+#pragma once
+#include <string>
+#include <spdlog/spdlog.h>
+#include <libmqtt-to-influxdb/stringhelper.hpp>
+
+struct settings {
+    std::string broker_ip{};
+    int broker_port{};
+    std::string influxdb_ip{};
+    int influxdb_port{};
+    std::string influxdb_user{};
+    std::string influxdb_password{};
+};
+
+namespace YAML {
+    template<>
+    struct convert<settings> {
+        static bool decode(const Node &node, settings &rhs) {
+            if (!node["broker"].IsDefined()) {
+                spdlog::error("Missing broker (line: {})", node.Mark().line);
+                return false;
+            }
+            auto &broker = node["broker"];
+            if (!broker["ip"].IsDefined()) {
+                spdlog::error("Missing broker ip (line: {})", node.Mark().line);
+                return false;
+            }
+            if (!broker["port"].IsDefined()) {
+                spdlog::error("Missing broker port (line: {})", node.Mark().line);
+                return false;
+            }
+
+            rhs.broker_ip = broker["ip"].as<std::string>();
+            if (stringhelper::is_empty_or_whitespace(rhs.broker_ip)) {
+                spdlog::error("Broker ip must not be empty (line: {})", node.Mark().line);
+                return false;
+            }
+
+            rhs.broker_port = broker["port"].as<int>();
+
+            if (!node["influxdb"].IsDefined()) {
+                spdlog::error("Missing influxdb (line: {})", node.Mark().line);
+                return false;
+            }
+            auto &influxdb = node["influxdb"];
+            if (!influxdb["ip"].IsDefined()) {
+                spdlog::error("Missing influxdb ip (line: {})", node.Mark().line);
+                return false;
+            }
+            if (!influxdb["port"].IsDefined()) {
+                spdlog::error("Missing influxdb port (line: {})", node.Mark().line);
+                return false;
+            }
+
+            rhs.influxdb_ip = influxdb["ip"].as<std::string>();
+            if (stringhelper::is_empty_or_whitespace(rhs.influxdb_ip)) {
+                spdlog::error("Influxdb ip must not be empty (line: {})", node.Mark().line);
+                return false;
+            }
+
+            rhs.influxdb_port = influxdb["port"].as<int>();
+
+            if (influxdb["user"].IsDefined()){
+                rhs.influxdb_user = influxdb["user"].as<std::string>();
+                if (stringhelper::is_empty_or_whitespace(rhs.influxdb_user)) {
+                    spdlog::error("Influxdb user must not be empty (line: {})", node.Mark().line);
+                    return false;
+                }
+            }
+            if (influxdb["password"].IsDefined()){
+              rhs.influxdb_password = influxdb["password"].as<std::string>();
+            }
+            return true;
+        }
+    };
+}

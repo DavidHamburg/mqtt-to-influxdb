@@ -1,9 +1,11 @@
 SET (files
        	datatype.hpp
        	mqttparseresult.hpp
+
+       	imqttmessageparser.hpp
        	mqttmessageparser.cpp
        	mqttmessageparser.hpp
-       	imqttmessageparser.hpp
+
        	stringhelper.cpp
        	stringhelper.hpp
 
@@ -14,12 +16,13 @@ SET (files
        	config/duplicatedeviceexception.hpp
        	config/document.hpp
        	config/field.hpp
-       	config/topic.hpp
        	config/measurement.hpp
+       	config/settings.hpp
+       	config/topic.hpp
 
+        database/iiotrepository.hpp
         database/iotrepository.cpp
         database/iotrepository.hpp
-        database/iiotrepository.hpp
 )
 
 if (MQTT_TO_INFLUXDB_BUILD_SHARED)
