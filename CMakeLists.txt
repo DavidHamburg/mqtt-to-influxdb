@@ -9,8 +9,12 @@ option(MQTT_TO_INFLUXDB_BUILD_SHARED "Enable building of unit tests" ON)
 option(WITH_TESTS "Enable building of unit tests" ON)
 option(WITH_SERVICE "Enable building of unit tests" ON)
 
-if (NOT MQTT_TO_INFLUXDB_BUILD_SHARED)
-  set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+if (MSVC)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+endif()
+
+if (NOT MQTT_TO_INFLUXDB_BUILD_SHARED AND NOT MSVC)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 endif()
 
 find_package(spdlog REQUIRED)
