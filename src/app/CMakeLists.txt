@@ -15,7 +15,11 @@ add_executable(mqtt-to-influxdb
         mqtt/internal/mqttclientcallback.hpp
         )
 
-target_link_libraries(mqtt-to-influxdb PRIVATE libmqtt-to-influxdb PahoMqttCpp::paho-mqttpp3 eventpp uuid)
+if (MQTT_TO_INFLUXDB_BUILD_SHARED)
+  target_link_libraries(mqtt-to-influxdb PRIVATE libmqtt-to-influxdb PahoMqttCpp::paho-mqttpp3 stduuid eventpp)
+else()
+  target_link_libraries(mqtt-to-influxdb PRIVATE libmqtt-to-influxdb PahoMqttCpp::paho-mqttpp3-static stduuid eventpp -static)
+endif()
 
 target_include_directories(mqtt-to-influxdb PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/>
@@ -29,3 +33,16 @@ else()
 endif()
 
 install(TARGETS mqtt-to-influxdb DESTINATION bin)
+
+install(FILES "${CMAKE_SOURCE_DIR}/contrib/mqtt-to-influxdb.service.sample"
+        DESTINATION "/usr/share/mqtt-to-influxdb/")
+
+SET(CPACK_GENERATOR "DEB")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "David Hamburg")
+
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+  SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE armhf)
+else()
+  SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64)
+endif()
+INCLUDE(CPack)

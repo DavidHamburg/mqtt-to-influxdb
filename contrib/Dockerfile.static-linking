@@ -1,0 +1,29 @@
+FROM alpine:3.12
+RUN apk update
+RUN apk add vim mc cmake git make g++ catch2
+RUN git clone https://github.com/eclipse/paho.mqtt.c.git && \
+    cd paho.mqtt.c && git checkout v1.3.8 && \
+    cmake -Bbuild -H. -DPAHO_ENABLE_TESTING=OFF -DPAHO_BUILD_STATIC=ON \
+          -DPAHO_WITH_SSL=OFF -DPAHO_HIGH_PERFORMANCE=ON && \
+    cmake --build build/ --target install
+RUN git clone https://github.com/eclipse/paho.mqtt.cpp.git && cd paho.mqtt.cpp && \
+    cmake -Bbuild -H. -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=OFF \
+        -DPAHO_BUILD_DOCUMENTATION=false -DPAHO_BUILD_SAMPLES=false && \
+    cmake --build build/ --target install 
+RUN git clone https://github.com/jarro2783/cxxopts.git && cd cxxopts && \
+    cmake -Bbuild -H. && cmake --build build/ --target install 
+RUN git clone https://github.com/jbeder/yaml-cpp.git && cd yaml-cpp && \
+    cmake -Bbuild -H. -DYAML_BUILD_SHARED_LIBS=OFF && \
+    cmake --build build/ --target install 
+RUN git clone https://github.com/nlohmann/json.git && cd json && \
+    cmake -Bbuild -H. -DJSON_BuildTests=OFF && \
+    cmake --build build/ --target install 
+RUN git clone https://github.com/gabime/spdlog.git && cd spdlog && \
+    cmake -Bbuild -H. -DSPDLOG_BUILD_EXAMPLE=OFF && \
+    cmake --build build/ --target install 
+RUN git clone https://github.com/mariusbancila/stduuid.git && cd stduuid && \
+    cmake -Bbuild -H. && \
+    cmake --build build/ --target install 
+RUN git clone https://github.com/microsoft/GSL.git && cd GSL && git checkout v3.1.0 && \
+    cmake -Bbuild -H. -DGSL_TEST=off && \
+    cmake --build build/ --target install 

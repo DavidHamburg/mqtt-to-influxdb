@@ -1,4 +1,4 @@
-add_library(libmqtt-to-influxdb
+SET (files
        	datatype.hpp
        	mqttparseresult.hpp
        	mqttmessageparser.cpp
@@ -22,7 +22,14 @@ add_library(libmqtt-to-influxdb
         database/iiotrepository.hpp
 )
 
-target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json INFLUXDB stdc++fs)
+if (MQTT_TO_INFLUXDB_BUILD_SHARED)
+  add_library(libmqtt-to-influxdb ${files})
+  target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json INFLUXDB stdc++fs)
+else()
+  add_library(libmqtt-to-influxdb STATIC ${files})
+  target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json INFLUXDB stdc++fs -static)
+endif()
+
 set_target_properties(libmqtt-to-influxdb PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(libmqtt-to-influxdb PUBLIC

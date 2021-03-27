@@ -1,3 +1,5 @@
 add_subdirectory(libmqtt-to-influxdb)
-add_subdirectory(app)
+if (WITH_SERVICE)
+  add_subdirectory(app)
+endif()
 add_subdirectory(app-validate)

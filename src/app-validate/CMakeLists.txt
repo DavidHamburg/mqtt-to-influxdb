@@ -1,6 +1,11 @@
 add_executable(mqtt-to-influxdb-validate main.cpp)
 
-target_link_libraries(mqtt-to-influxdb-validate PRIVATE libmqtt-to-influxdb)
+if (MQTT_TO_INFLUXDB_BUILD_SHARED)
+  target_link_libraries(mqtt-to-influxdb-validate PRIVATE libmqtt-to-influxdb)
+else()
+  target_link_libraries(mqtt-to-influxdb-validate PRIVATE libmqtt-to-influxdb -static)
+endif()
+
 
 target_include_directories(mqtt-to-influxdb-validate PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/>
@@ -14,3 +19,4 @@ else()
 endif()
 
 install(TARGETS mqtt-to-influxdb-validate DESTINATION bin)
+

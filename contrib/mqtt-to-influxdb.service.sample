@@ -1,0 +1,10 @@
+[Unit]
+After=influxdb.service
+After=mosquitto.service
+Description=mqtt-to-influxdb
+ 
+[Service]
+ExecStart=/usr/bin/mqtt-to-influxdb -c /etc/mqtt-to-influxdb/config.yaml
+ 
+[Install]
+WantedBy=multi-user.target

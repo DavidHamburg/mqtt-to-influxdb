@@ -1,4 +1,3 @@
-#define UUID_SYSTEM_GENERATOR
 #include <app/mqtt/mqttlistener.hpp>
 #include <mqtt/connect_options.h>
 #include <mqtt/async_client.h>
@@ -24,7 +23,14 @@ mqttlistener::mqttlistener(const std::string &mqtt_server_ip, const std::string 
 }
 
 std::string mqttlistener::get_unique_mqtt_client_name(const std::string &name) const {
-    auto id = uuids::uuid_system_generator{}();
+    std::random_device rd;
+    auto seed_data = std::array<int, std::mt19937::state_size> {};
+    std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
+    std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
+    std::mt19937 engine(seq);
+    uuids::uuid_random_generator generator(&engine);
+
+    auto id = generator();
     std::stringstream ss{};
     ss << name << "-subscriber-" << uuids::to_string(id);
     return ss.str();
