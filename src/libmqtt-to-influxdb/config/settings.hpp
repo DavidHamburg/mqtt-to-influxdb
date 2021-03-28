@@ -6,10 +6,12 @@
 struct settings {
     std::string broker_ip{};
     int broker_port{};
-    std::string influxdb_ip{};
+    std::string influxdb_host{};
     int influxdb_port{};
     std::string influxdb_user{};
     std::string influxdb_password{};
+    std::string influxdb_database{"iot"};
+    std::string influxdb_protocol{"http"};
 };
 
 namespace YAML {
@@ -43,8 +45,8 @@ namespace YAML {
                 return false;
             }
             auto &influxdb = node["influxdb"];
-            if (!influxdb["ip"].IsDefined()) {
-                spdlog::error("Missing influxdb ip (line: {})", node.Mark().line);
+            if (!influxdb["host"].IsDefined()) {
+                spdlog::error("Missing influxdb host (line: {})", node.Mark().line);
                 return false;
             }
             if (!influxdb["port"].IsDefined()) {
@@ -52,9 +54,9 @@ namespace YAML {
                 return false;
             }
 
-            rhs.influxdb_ip = influxdb["ip"].as<std::string>();
-            if (stringhelper::is_empty_or_whitespace(rhs.influxdb_ip)) {
-                spdlog::error("Influxdb ip must not be empty (line: {})", node.Mark().line);
+            rhs.influxdb_host = influxdb["host"].as<std::string>();
+            if (stringhelper::is_empty_or_whitespace(rhs.influxdb_host)) {
+                spdlog::error("Influxdb host must not be empty (line: {})", node.Mark().line);
                 return false;
             }
 

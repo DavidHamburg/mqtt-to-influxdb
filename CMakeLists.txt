@@ -21,6 +21,8 @@ find_package(spdlog REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(cxxopts REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(InfluxDB CONFIG REQUIRED)
+
 
 if (WITH_SERVICE)
   find_package(PahoMqttCpp CONFIG REQUIRED)

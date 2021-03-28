@@ -27,3 +27,7 @@ RUN git clone https://github.com/mariusbancila/stduuid.git && cd stduuid && \
 RUN git clone https://github.com/microsoft/GSL.git && cd GSL && git checkout v3.1.0 && \
     cmake -Bbuild -H. -DGSL_TEST=off && \
     cmake --build build/ --target install 
+RUN apk add curl-dev curl-static
+RUN git clone https://github.com/offa/influxdb-cxx.git && cd influxdb-cxx && git checkout v0.6.6 && \ 
+    cmake -Bbuild -H. -DINFLUXCXX_TESTING=off -DINFLUXCXX_WITH_BOOST=off -DBUILD_SHARED_LIBS=OFF && \
+    cmake --build build/ --target install 

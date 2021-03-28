@@ -8,7 +8,7 @@ TEST_CASE_METHOD(configurationfixture, "can load valid configuration") {
     auto sample = R"(
     settings:
       influxdb:
-        ip: 127.0.0.1
+        host: 127.0.0.1
         port: 1883
       broker:
         ip: 127.0.0.1

@@ -1,6 +1,3 @@
-[submodule "3rdparty/influxdb"]
-	path = 3rdparty/influxdb
-	url = https://github.com/orca-zhang/influxdb-cpp.git
 [submodule "3rdparty/eventpp"]
 	path = 3rdparty/eventpp
 	url = https://github.com/wqking/eventpp.git

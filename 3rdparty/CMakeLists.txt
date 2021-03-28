@@ -1,8 +1,3 @@
-# influxdb c++ client
-set(INFLUXDB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/influxdb)
-add_library(INFLUXDB INTERFACE)
-target_include_directories(INFLUXDB SYSTEM INTERFACE $<BUILD_INTERFACE:${INFLUXDB_INCLUDE_DIR}>)
-
 # eventpp
 set(EVENTPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/eventpp/include/)
 add_library(eventpp INTERFACE)

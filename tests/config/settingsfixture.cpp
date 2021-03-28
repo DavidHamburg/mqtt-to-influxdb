@@ -8,7 +8,7 @@ class settingsfixture { };
 TEST_CASE_METHOD(settingsfixture, "deserializes broker ip") {
     std::string sample = R"(
 influxdb:
-  ip: 127.0.0.1
+  host: 127.0.0.1
   port: 1883
 broker:
   port: 8086
@@ -38,7 +38,7 @@ broker:
 TEST_CASE_METHOD(settingsfixture, "deserializes broker port") {
     std::string sample = R"(
 influxdb:
-  ip: 127.0.0.1
+  host: 127.0.0.1
   port: 1883
 broker:
   ip: 192.168.178.201
@@ -60,7 +60,7 @@ broker:
     }
 }
 
-TEST_CASE_METHOD(settingsfixture, "deserializes influxdb ip") {
+TEST_CASE_METHOD(settingsfixture, "deserializes influxdb host") {
     std::string sample = R"(
 broker:
   ip: 192.168.178.102
@@ -68,25 +68,25 @@ broker:
 influxdb:
   port: 1883
   )";
-    SECTION("ip is required") {
+    SECTION("host is required") {
         YAML::Node node = YAML::Load(sample);
         REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
     }
     SECTION("must not be empty") {
-        sample += "ip: \"\"";
+        sample += "host: \"\"";
         YAML::Node node = YAML::Load(sample);
         REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
     }
     SECTION("must not be whitespace") {
-        sample += "ip: \"   \"";
+        sample += "host: \"   \"";
         YAML::Node node = YAML::Load(sample);
         REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
     }
-    SECTION("ip") {
-        sample += "ip: \"192.168.178.201\"";
+    SECTION("host") {
+        sample += "host: \"192.168.178.201\"";
         YAML::Node node = YAML::Load(sample);
         auto m = node.as<settings>();
-        REQUIRE(m.influxdb_ip == "192.168.178.201");
+        REQUIRE(m.influxdb_host == "192.168.178.201");
     }
 }
 
@@ -96,7 +96,7 @@ broker:
   ip: 192.168.178.201
   port: 8086
 influxdb:
-  ip: 192.168.178.201
+  host: 192.168.178.201
   )";
     SECTION("is required") {
         YAML::Node node = YAML::Load(sample);
@@ -121,7 +121,7 @@ broker:
   ip: 192.168.178.102
   port: 8086
 influxdb:
-  ip: 192.168.178.102
+  host: 192.168.178.102
   port: 1883
   )";
     SECTION("user is optional") {
@@ -152,7 +152,7 @@ broker:
   ip: 192.168.178.102
   port: 8086
 influxdb:
-  ip: 192.168.178.102
+  host: 192.168.178.102
   port: 1883
   )";
     SECTION("password is optional") {

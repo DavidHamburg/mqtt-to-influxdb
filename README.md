@@ -6,7 +6,6 @@ mqtt-to-influxdb is a [MQTT](https://en.wikipedia.org/wiki/MQTT) message parser 
 
 - mqtt message broker (e.g. mosquitto)
 - InfluxDB
-- libyaml-cpp0.6
 
 ## Supported OS
 
@@ -25,9 +24,15 @@ mqtt-to-influxdb is a [MQTT](https://en.wikipedia.org/wiki/MQTT) message parser 
 ## Dependencies
 
 - https://github.com/jbeder/yaml-cpp
-- https://github.com/orca-zhang/influxdb-cpp
 - https://github.com/wqking/eventpp
 - https://github.com/eclipse/paho.mqtt.cpp
+- https://github.com/offa/influxdb-cxx
+
+### vcpkg
+
+```
+vcpkg.exe install spdlog:x64-windows-static yaml-cpp:x64-windows-static cxxopts:x64-windows-static nlohmann-json:x64-windows-static influxdb-cxx:x64-windows-static
+```
 
 ## Usage
 
@@ -73,7 +78,7 @@ The data will not be stored in InfluxDB by default. Specify ```--store``` to wri
 ```yaml
 settings:
   influxdb:
-    ip: 127.0.0.1
+    host: 127.0.0.1
     port: 8086
     user: iot
     password: mqtt
@@ -105,7 +110,7 @@ thermostat:
 ```yaml
 settings:
   influxdb:
-    ip: 127.0.0.1
+    host: 127.0.0.1
     port: 8086
     user: iot
     password: mqtt

@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
         }
 
         auto &con = document->connection;
-        iot_repository repo{con.influxdb_user, con.influxdb_password, con.influxdb_ip, con.influxdb_port};
+        iot_repository repo{con.influxdb_user, con.influxdb_password, con.influxdb_host, con.influxdb_port, con.influxdb_protocol, con.influxdb_database};
         mqttmessageparser parser{document};
         mqttlistenerfactory listener_factory{};
         auto listener = listener_factory.create(con.broker_ip, con.broker_port, "mqtt-to-influxdb", "#");

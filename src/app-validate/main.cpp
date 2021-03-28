@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
             auto data = parser.parse(topic, msg);
 
             auto &con = document->connection;
-            iot_repository repo{con.influxdb_user, con.influxdb_password, con.influxdb_ip, con.influxdb_port};
+            iot_repository repo{con.influxdb_user, con.influxdb_password, con.influxdb_host, con.influxdb_port, con.influxdb_protocol, con.influxdb_database};
 
             for(const auto &d : data) {
                 std::cout << "Measurement:    " << d.first << std::endl;

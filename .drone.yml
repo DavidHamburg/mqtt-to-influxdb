@@ -7,7 +7,8 @@ steps:
   commands:
   - apt update && apt install -y ca-certificates
   - echo "deb [trusted=yes] https://www.sprintf.io/repos/apt/debian buster main" >> /etc/apt/sources.list && apt update
-  - apt install -y cmake g++ git libssl-dev libspdlog-dev nlohmann-json3-dev catch2 libyaml-cpp-dev libcxxopts-dev libpaho-mqtt++-dev stduuid libmsgsl-dev
+  - apt install -y cmake g++ git libssl-dev libspdlog-dev nlohmann-json3-dev catch2 libyaml-cpp-dev libcxxopts-dev libpaho-mqtt++-dev stduuid libmsgsl-dev libcurl4-openssl-dev
+  - git clone https://github.com/offa/influxdb-cxx.git && cd influxdb-cxx && git checkout v0.6.6 && cmake -Bbuild -H. -DINFLUXCXX_TESTING=off -DINFLUXCXX_WITH_BOOST=off -DBUILD_SHARED_LIBS=OFF && cmake --build build/ --target install
   - cd $DRONE_WORKSPACE && git submodule update --init
   - mkdir -p build && cd build
   - cmake $DRONE_WORKSPACE
