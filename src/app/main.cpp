@@ -7,13 +7,12 @@
     namespace fs = std::filesystem;
 #else
     #include <experimental/filesystem>
+    namespace fs = std::experimental::filesystem;
+#endif
 #include <thread>
 #include <libmqtt-to-influxdb/config/configuration.hpp>
 #include <libmqtt-to-influxdb/mqttmessageparser.hpp>
 #include <libmqtt-to-influxdb/database/iotrepository.hpp>
-
-namespace fs = std::experimental::filesystem;
-#endif
 
 int main(int argc, char **argv) {
     spdlog::set_level(spdlog::level::info);

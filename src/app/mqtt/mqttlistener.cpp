@@ -2,8 +2,12 @@
 #include <mqtt/connect_options.h>
 #include <mqtt/async_client.h>
 #include <app/mqtt/internal/mqttclientcallback.hpp>
-#include <uuid.h>
 #include <sstream>
+#ifdef WITH_MQTT_NAME_UUID
+  #include <uuid.h>
+#endif
+#include <random>
+#include <array>
 
 mqttlistener::mqttlistener(const std::string &mqtt_server_ip, const int port, const std::string &name, const std::string &topic) {
     mqtt::connect_options connOpts;
@@ -26,16 +30,23 @@ mqttlistener::mqttlistener(const std::string &mqtt_server_ip, const int port, co
 }
 
 std::string mqttlistener::get_unique_mqtt_client_name(const std::string &name) const {
+    std::stringstream ss{};
+    ss << name << "-subscriber-";
+
     std::random_device rd;
     auto seed_data = std::array<int, std::mt19937::state_size> {};
     std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
     std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
     std::mt19937 engine(seq);
+#ifdef WITH_MQTT_NAME_UUID
     uuids::uuid_random_generator generator(&engine);
 
     auto id = generator();
-    std::stringstream ss{};
-    ss << name << "-subscriber-" << uuids::to_string(id);
+    ss << uuids::to_string(id);
+#else
+    std::uniform_int_distribution<> distrib(1, 1000);
+    ss << distrib(engine);
+#endif
     return ss.str();
 }
 

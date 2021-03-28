@@ -25,23 +25,24 @@ SET (files
         database/iotrepository.hpp
 )
 
-if (MQTT_TO_INFLUXDB_BUILD_SHARED)
-  add_library(libmqtt-to-influxdb ${files})
+set(libraries spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json InfluxData::InfluxDB OpenSSL::SSL OpenSSL::Crypto)
+
+if (NOT MSVC)
+  set(libraries ${libraries} stdc++fs)
+endif()
+
+add_library(libmqtt-to-influxdb ${files})
+
+if (NOT MQTT_TO_INFLUXDB_BUILD_SHARED)
   if (MSVC)
-    target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json InfluxData::InfluxDB)
-  else()
-    target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json stdc++fs InfluxData::InfluxDB)
-  endif()
-else()
-  add_library(libmqtt-to-influxdb STATIC ${files})
-  if (MSVC)
-    target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog_header_only yaml-cpp cxxopts::cxxopts nlohmann_json InfluxData::InfluxDB)
     target_link_options(libmqtt-to-influxdb PUBLIC /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
     target_compile_options(libmqtt-to-influxdb PUBLIC /MT)
   else()
-    target_link_libraries(libmqtt-to-influxdb PUBLIC spdlog::spdlog yaml-cpp cxxopts::cxxopts nlohmann_json InfluxData::InfluxDB stdc++fs -static)
+    set(libraries ${libraries} ${NGHTTP2_LIBRARIES} ZLIB::ZLIB -static)
   endif()
 endif()
+
+target_link_libraries(libmqtt-to-influxdb PUBLIC ${libraries})
 
 set_target_properties(libmqtt-to-influxdb PROPERTIES LINKER_LANGUAGE CXX)
 

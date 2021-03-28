@@ -3,7 +3,7 @@
 #include <yaml-cpp/exceptions.h>
 
 namespace YAML {
-    class Mark;
+    struct Mark;
 }
 
 class DuplicateDeviceException : public YAML::Exception {

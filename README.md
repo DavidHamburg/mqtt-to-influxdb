@@ -31,7 +31,7 @@ mqtt-to-influxdb is a [MQTT](https://en.wikipedia.org/wiki/MQTT) message parser 
 ### vcpkg
 
 ```
-vcpkg.exe install spdlog:x64-windows-static yaml-cpp:x64-windows-static cxxopts:x64-windows-static nlohmann-json:x64-windows-static influxdb-cxx:x64-windows-static
+vcpkg.exe install spdlog:x64-windows-static yaml-cpp:x64-windows-static cxxopts:x64-windows-static nlohmann-json:x64-windows-static influxdb-cxx:x64-windows-static paho-mqttpp3:x64-windows-static
 ```
 
 ## Usage
