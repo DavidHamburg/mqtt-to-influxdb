@@ -1,12 +1,8 @@
 settings:
   influxdb:
-    host: 127.0.0.1
-    port: 8086
     user: iot
     password: mqtt
-  broker:
-    ip: 127.0.0.1
-    port: 1883
+    database: iot
 bedroom_tv:
   - topic: "stat/bedroom/POWER"
     description: ""

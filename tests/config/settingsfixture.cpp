@@ -5,17 +5,26 @@
 
 class settingsfixture { };
 
+TEST_CASE_METHOD(settingsfixture, "broker is optional") {
+    std::string sample = R"(
+influxdb:
+  database: iot
+)";
+    YAML::Node node = YAML::Load(sample);
+    REQUIRE_NOTHROW(node.as<settings>());
+}
+
 TEST_CASE_METHOD(settingsfixture, "deserializes broker ip") {
     std::string sample = R"(
 influxdb:
-  host: 127.0.0.1
-  port: 1883
+  database: iot
 broker:
-  port: 8086
+  port: 1883
   )";
-    SECTION("ip is required") {
+    SECTION("ip is optional, default 127.0.0.1") {
         YAML::Node node = YAML::Load(sample);
-        REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
+        auto m = node.as<settings>();
+        REQUIRE(m.broker_ip == "127.0.0.1");
     }
     SECTION("must not be empty") {
         sample += "ip: \"\"";
@@ -38,14 +47,14 @@ broker:
 TEST_CASE_METHOD(settingsfixture, "deserializes broker port") {
     std::string sample = R"(
 influxdb:
-  host: 127.0.0.1
-  port: 1883
+  database: iot
 broker:
   ip: 192.168.178.201
   )";
-    SECTION("is required") {
+    SECTION("is optional, default 1883") {
         YAML::Node node = YAML::Load(sample);
-        REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
+        auto m = node.as<settings>();
+        REQUIRE(m.broker_port == 1883);
     }
     SECTION("must not be empty") {
         sample += "port: ";
@@ -53,10 +62,10 @@ broker:
         REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
     }
     SECTION("port") {
-        sample += "port: 8086";
+        sample += "port: 1234";
         YAML::Node node = YAML::Load(sample);
         auto m = node.as<settings>();
-        REQUIRE(m.broker_port == 8086);
+        REQUIRE(m.broker_port == 1234);
     }
 }
 
@@ -64,13 +73,14 @@ TEST_CASE_METHOD(settingsfixture, "deserializes influxdb host") {
     std::string sample = R"(
 broker:
   ip: 192.168.178.102
-  port: 8086
-influxdb:
   port: 1883
+influxdb:
+  database: iot
   )";
-    SECTION("host is required") {
+    SECTION("host is optional, default 127.0.0.1") {
         YAML::Node node = YAML::Load(sample);
-        REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
+        auto m = node.as<settings>();
+        REQUIRE(m.influxdb_host == "127.0.0.1");
     }
     SECTION("must not be empty") {
         sample += "host: \"\"";
@@ -94,13 +104,14 @@ TEST_CASE_METHOD(settingsfixture, "deserializes influxdb port") {
     std::string sample = R"(
 broker:
   ip: 192.168.178.201
-  port: 8086
+  port: 1883
 influxdb:
-  host: 192.168.178.201
+  database: iot
   )";
-    SECTION("is required") {
+    SECTION("is optional, default 8086") {
         YAML::Node node = YAML::Load(sample);
-        REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
+        auto m = node.as<settings>();
+        REQUIRE(m.influxdb_port == 8086);
     }
     SECTION("must not be empty") {
         sample += "port: ";
@@ -108,10 +119,10 @@ influxdb:
         REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
     }
     SECTION("port") {
-        sample += "port: 1883";
+        sample += "port: 1234";
         YAML::Node node = YAML::Load(sample);
         auto m = node.as<settings>();
-        REQUIRE(m.influxdb_port == 1883);
+        REQUIRE(m.influxdb_port == 1234);
     }
 }
 
@@ -119,10 +130,9 @@ TEST_CASE_METHOD(settingsfixture, "deserializes influxdb user") {
     std::string sample = R"(
 broker:
   ip: 192.168.178.102
-  port: 8086
-influxdb:
-  host: 192.168.178.102
   port: 1883
+influxdb:
+  database: iot
   )";
     SECTION("user is optional") {
         YAML::Node node = YAML::Load(sample);
@@ -150,10 +160,9 @@ TEST_CASE_METHOD(settingsfixture, "deserializes influxdb password") {
     std::string sample = R"(
 broker:
   ip: 192.168.178.102
-  port: 8086
-influxdb:
-  host: 192.168.178.102
   port: 1883
+influxdb:
+  database: iot
   )";
     SECTION("password is optional") {
         YAML::Node node = YAML::Load(sample);
@@ -164,5 +173,30 @@ influxdb:
         YAML::Node node = YAML::Load(sample);
         auto m = node.as<settings>();
         REQUIRE(m.influxdb_password == "my password");
+    }
+}
+
+TEST_CASE_METHOD(settingsfixture, "deserializes influxdb database") {
+    std::string sample = R"(
+broker:
+  ip: 192.168.178.201
+  port: 1883
+influxdb:
+  host: 192.168.178.201
+  )";
+    SECTION("is required") {
+        YAML::Node node = YAML::Load(sample);
+        REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
+    }
+    SECTION("must not be empty") {
+        sample += "database: ";
+        YAML::Node node = YAML::Load(sample);
+        REQUIRE_THROWS_AS(node.as<settings>(), YAML::RepresentationException);
+    }
+    SECTION("database") {
+        sample += "database: mydb";
+        YAML::Node node = YAML::Load(sample);
+        auto m = node.as<settings>();
+        REQUIRE(m.influxdb_database == "mydb");
     }
 }

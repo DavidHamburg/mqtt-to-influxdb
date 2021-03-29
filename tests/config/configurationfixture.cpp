@@ -8,11 +8,7 @@ TEST_CASE_METHOD(configurationfixture, "can load valid configuration") {
     auto sample = R"(
     settings:
       influxdb:
-        host: 127.0.0.1
-        port: 1883
-      broker:
-        ip: 127.0.0.1
-        port: 8086
+        database: iot
     thermostat:
     - topic: "zigbee2mqtt/0x00158d00053d224e"
       measurements:
