@@ -1,0 +1,50 @@
+name: CMake
+
+on: [push]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+
+    - name: Create Build Environment
+      run: |
+        cmake -E make_directory ${{github.workspace}}/build
+        mkdir ${{github.workspace}}/dependencies && cd ${{github.workspace}}/dependencies
+        sudo apt update
+        sudo apt install -y cmake g++ git libssl-dev libspdlog-dev nlohmann-json3-dev libyaml-cpp-dev libcurl4-openssl-dev
+        git clone https://github.com/offa/influxdb-cxx.git && cd influxdb-cxx && git checkout v0.6.6 && cmake -Bbuild -H. -DCMAKE_BUILD_TYPE=Release -DINFLUXCXX_TESTING=off -DINFLUXCXX_WITH_BOOST=off -DBUILD_SHARED_LIBS=OFF && sudo cmake --build build/ --target install
+        git clone https://github.com/catchorg/Catch2.git && cd Catch2 && git checkout v2.13.4 && cmake -Bbuild -H. -DCMAKE_BUILD_TYPE=Release -DCATCH_DEVELOPMENT_BUILD=off && sudo cmake --build build/ --target install
+        git clone https://github.com/jarro2783/cxxopts.git && cd cxxopts && git checkout v2.2.1 && cmake -Bbuild -H. -DCMAKE_BUILD_TYPE=Release -DCXXOPTS_BUILD_TESTS=off -DCXXOPTS_BUILD_EXAMPLES=off -DCXXOPTS_ENABLE_WARNINGS=off && sudo cmake --build build/ --target install
+        git clone https://github.com/eclipse/paho.mqtt.c.git && cd paho.mqtt.c && git checkout v1.3.8 && cmake -Bbuild -H. -DCMAKE_BUILD_TYPE=Release -DPAHO_ENABLE_TESTING=OFF -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=OFF -DPAHO_HIGH_PERFORMANCE=ON && sudo cmake --build build/ --target install
+        git clone https://github.com/eclipse/paho.mqtt.cpp.git && cd paho.mqtt.cpp && cmake -Bbuild -H. -DCMAKE_BUILD_TYPE=Release -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=OFF -DPAHO_BUILD_DOCUMENTATION=false -DPAHO_BUILD_SAMPLES=false && sudo cmake --build build/ --target install 
+        cd ${{github.workspace}}/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      # Note the current convention is to use the -S and -B options here to specify source 
+      # and build directories, but this is only available with CMake 3.13 and higher.  
+      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DWITH_MQTT_NAME_UUID=off
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: ctest -C $BUILD_TYPE
