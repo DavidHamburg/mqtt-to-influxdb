@@ -1,3 +1,5 @@
+[![CMake](https://github.com/DavidHamburg/mqtt-to-influxdb/actions/workflows/cmake.yml/badge.svg)](https://github.com/DavidHamburg/mqtt-to-influxdb/actions/workflows/cmake.yml)
+
 # mqtt-to-influxdb
 
 mqtt-to-influxdb is a [MQTT](https://en.wikipedia.org/wiki/MQTT) message parser for writing statistics into InfluxDB.
