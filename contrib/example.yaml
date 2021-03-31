@@ -10,11 +10,4 @@ bedroom_tv:
       - name: "plug_bed_room_tv"
         fields:
           - name: "state"
-            value: true
-            match: "on"
-            data-type: bool
-          - name: "state"
-            value: false
-            match: "OFF"
-            ignore-case: false
             data-type: bool

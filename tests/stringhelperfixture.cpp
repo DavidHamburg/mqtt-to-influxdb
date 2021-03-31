@@ -36,6 +36,10 @@ TEST_CASE_METHOD(stringhelperfixture, "convert to bool") {
         auto result = stringhelper::to_bool(" ");
         REQUIRE(result == false);
     }
+    SECTION("True") {
+        auto result = stringhelper::to_bool("True");
+        REQUIRE(result == true);
+    }
     SECTION("true") {
         auto result = stringhelper::to_bool("true");
         REQUIRE(result == true);
@@ -51,6 +55,18 @@ TEST_CASE_METHOD(stringhelperfixture, "convert to bool") {
     SECTION("true with whitespaces") {
         auto result = stringhelper::to_bool(" true ");
         REQUIRE(result == true);
+    }
+    SECTION("ON") {
+        auto result = stringhelper::to_bool("ON");
+        REQUIRE(result == true);
+    }
+    SECTION("oN case insensitive") {
+        auto result = stringhelper::to_bool("oN");
+        REQUIRE(result == true);
+    }
+    SECTION("OFF") {
+        auto result = stringhelper::to_bool("OFF");
+        REQUIRE(result == false);
     }
 }
 

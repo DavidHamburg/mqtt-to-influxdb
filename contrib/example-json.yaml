@@ -5,13 +5,11 @@ settings:
     database: iot
 bedroom_tv:
   - topic: "stat/bedroom/POWER"
-    description: ""
+    description: "payload: { \"state\": \"on\"}"
     measurements:
       - name: "plug_bed_room_tv"
         fields:
           - name: "state"
-            value: true
-            match: "on"
             data-type: bool
             json-field: state
           - name: "battery"

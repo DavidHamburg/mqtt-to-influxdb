@@ -17,6 +17,7 @@ mqtt-to-influxdb is a [MQTT](https://en.wikipedia.org/wiki/MQTT) message parser 
     - [Supported Data Types](#supported-data-types)
     - [Use payload as value to store](#use-payload-as-value-to-store)
     - [Match payload and store specific value](#match-payload-and-store-specific-value)
+    - [Store payload as value](#store-payload-as-value)
     - [Parse Json Fields](#parse-json-fields)
     - [Parse Json Field of another Field](#parse-json-field-of-another-field)
   + [Complete Example](#complete-example)
@@ -169,7 +170,7 @@ Result:
  - value:     true
  - data-type: bool
 
-#### Store payload directly
+#### Store payload as value
 
 mqtt-message: ```state/plug/POWER on```
 
@@ -264,12 +265,6 @@ bureau_pc:
         fields:
           - name: "state"
             data-type: bool
-            match: "on"
-            value: true
-          - name: "state"
-            data-type: bool
-            match: "off"
-            value: false
 
 living_room_thermostat:
   - topic: "zigbee2mqtt/0x00158d00053d224e"

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(mqtt-to-influxdb LANGUAGES CXX VERSION 0.1.1)
+project(mqtt-to-influxdb LANGUAGES CXX VERSION 0.2.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
