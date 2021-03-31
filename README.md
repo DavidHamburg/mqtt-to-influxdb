@@ -169,6 +169,23 @@ Result:
  - value:     true
  - data-type: bool
 
+#### Store payload directly
+
+mqtt-message: ```state/plug/POWER on```
+
+```yaml
+- name: "state"
+  data-type: bool
+```
+
+Result:
+
+ - field:     state
+ - value:     true
+ - data-type: bool
+
+Hint: when data-type bool is specified it parses ```true```, ```on``` and ```1``` as boolean values.
+
 #### Parse Json Fields
 
 mqtt-message: 

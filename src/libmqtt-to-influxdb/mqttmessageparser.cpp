@@ -56,7 +56,7 @@ std::tuple<bool, mqtt_parse_result>
 mqttmessageparser::create_mqtt_parse_result(const measurement &measurement, const field &field,
                                             const std::string &mqtt_payload) const {
     mqtt_parse_result data{};
-    if (stringhelper::is_equal(field.match, mqtt_payload, !field.ignore_case)) {
+    if (stringhelper::is_empty_or_whitespace(field.match) || stringhelper::is_equal(field.match, mqtt_payload, !field.ignore_case)) {
         data.measurement = measurement.name;
         if (field.value == "") {
             data.value = mqtt_payload;
